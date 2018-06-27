@@ -1,0 +1,8 @@
+Directions to install:
+ - copy [INDICATOR].cs to your user directory under Documents\Alveo\Code\Indicators.
+ - Click the </> button up in the top left of the Alveo window then select editor.
+ - In the Code Editor window, click the button that has the line underneath an up arrow - open a file.
+ - Select the [INDICATOR].cs file from the directory where it was copied to.
+ - With the code loaded, click the Green down arrow on the far right.
+ - Once you see "Build Successful" in the bottom left of the Code Editor screen, close the Code Editor.
+ - Add the new indicator to your chart as you would any other indicator.
