@@ -82,7 +82,7 @@ namespace Alveo.UserCode
             if (baseArray.Count == 0)
                 return 0;
 
-            for (var i = (TEMAPeriod * 3); i < Bars - 1; i++) 
+            for (var i = (TEMAPeriod * 3); i < Bars; i++) 
             {
                 ema[i, false] = (double)((decimal)baseArray[i] * (2M / ((decimal)TEMAPeriod + 1M)) + (1M - (2M / ((decimal)TEMAPeriod + 1M))) * (decimal)ema[i - 1]);
                 ema_ema[i, false] = (double)((decimal)ema[i] * (2M / ((decimal)TEMAPeriod + 1M)) + (1M - (2M / ((decimal)TEMAPeriod + 1M))) * (decimal)ema_ema[i - 1]);
