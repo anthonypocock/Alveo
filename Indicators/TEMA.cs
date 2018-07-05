@@ -15,40 +15,50 @@ namespace Alveo.UserCode
         [Category("Settings")]
         [Description("Period")]
         public int TEMAPeriod { get; set; }
-
+        
         [Category("Settings")]
-        [Description("Shift")]
-        public int TEMAShift { get; set; }
+        [Description("Trend Shift")]
+        public int TEMATrendShift { get; set; }
 
         #endregion
 
-        Array<double> tema;
+        Array<double> temaSignal;
+        Array<double> temaTrend;
 
         public TEMA()
         {
 
-            indicator_buffers = 1;
+            indicator_buffers = 2;
             indicator_chart_window = true;
 
             indicator_width1 = 2;
-            indicator_color1 = Red;
+            indicator_color1 = Turquoise;
             indicator_style1 = STYLE_SOLID;
-            
-            tema = new Array<double>();
+
+            indicator_width2 = 2;
+            indicator_color2 = LimeGreen;
+            indicator_style2 = STYLE_SOLID;
+
+            temaSignal = new Array<double>();
+            temaTrend = new Array<double>();
 
             // Legals
             copyright = "Anthony Pocock";
-            link = "https://github.com/anthonypocock/Alveo";
+            link = "";
             TEMAPeriod = 14;
+            TEMATrendShift = 2;
 
         }
 
 
         protected override int Init()
         {
-            SetIndexBuffer(0, tema);
-            SetIndexStyle(0, 0); 
-            SetIndexLabel(0, "TEMA");
+            SetIndexBuffer(0, temaSignal);
+            SetIndexStyle(0, 0);
+            SetIndexLabel(0, "TEMA Signal");
+            SetIndexBuffer(1, temaTrend);
+            SetIndexStyle(1, 0);
+            SetIndexLabel(1, "TEMA Trend");
 
             IndicatorShortName("TEMA");
 
@@ -72,7 +82,8 @@ namespace Alveo.UserCode
             ArrayResize(ema_ema, Bars);
             ArrayResize(ema_ema_ema, Bars);
 
-            ArrayInitialize(tema, EMPTY_VALUE);
+            ArrayInitialize(temaSignal, EMPTY_VALUE);
+            ArrayInitialize(temaTrend, EMPTY_VALUE);
 
             ArrayCopy(baseArray, GetPrice(GetHistory(Symbol(), TimeFrame), PRICE_CLOSE));
             ArrayCopy(ema, GetPrice(GetHistory(Symbol(), TimeFrame), PRICE_CLOSE));
@@ -82,12 +93,13 @@ namespace Alveo.UserCode
             if (baseArray.Count == 0)
                 return 0;
 
-            for (var i = (TEMAPeriod * 3); i < Bars - 1; i++) 
+            for (var i = (TEMAPeriod * 3); i < Bars; i++) 
             {
                 ema[i, false] = (double)((decimal)baseArray[i] * (2M / ((decimal)TEMAPeriod + 1M)) + (1M - (2M / ((decimal)TEMAPeriod + 1M))) * (decimal)ema[i - 1]);
                 ema_ema[i, false] = (double)((decimal)ema[i] * (2M / ((decimal)TEMAPeriod + 1M)) + (1M - (2M / ((decimal)TEMAPeriod + 1M))) * (decimal)ema_ema[i - 1]);
                 ema_ema_ema[i, false] = (double)((decimal)ema_ema[i] * (2M / ((decimal)TEMAPeriod + 1M)) + (1M - (2M / ((decimal)TEMAPeriod + 1M))) * (decimal)ema_ema_ema[i - 1]);
-                tema[i + TEMAShift, false] = (double)((3M * (decimal)ema[i]) - (3M * (decimal)ema_ema[i]) + (decimal)ema_ema_ema[i]);
+                temaSignal[i, false] = (double)((3M * (decimal)ema[i]) - (3M * (decimal)ema_ema[i]) + (decimal)ema_ema_ema[i]);
+                temaTrend[i + TEMATrendShift, false] = (double)((3M * (decimal)ema[i]) - (3M * (decimal)ema_ema[i]) + (decimal)ema_ema_ema[i]);
             }
 
             return 0;
@@ -109,7 +121,7 @@ namespace Alveo.UserCode
             if (TEMAPeriod != (int)values[2])
                 return false;
 
-            if (TEMAShift != (int)values[3])
+            if (TEMATrendShift != (int)values[3])
                 return false;
 
             return true;
@@ -124,7 +136,7 @@ namespace Alveo.UserCode
             Symbol = (string)values[0];
             TimeFrame = (int)values[1];
             TEMAPeriod = (int)values[2];
-            TEMAShift = (int)values[3];
+            TEMATrendShift = (int)values[3];
 
         }
 
