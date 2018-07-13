@@ -35,7 +35,7 @@ namespace Alveo.UserCode
             // Legals
             copyright = "Anthony Pocock";
             link = "https://github.com/anthonypocock/Alveo";
-            SRBars = 6;
+            SRBars = 12;
             currentBars = 0;
             lastUpdatedBarCount = 0;
 
@@ -58,7 +58,7 @@ namespace Alveo.UserCode
 
             ArrayResize(Resistance, Bars);
             ArrayResize(Support, Bars);
-
+            currentBars = 0;
             return 0;
         }
 
@@ -80,7 +80,7 @@ namespace Alveo.UserCode
                 for (int x = 1; x <= SRBars + 1; x++)
                 {
                     double barLow = iLow(Symbol(), Period(), x);
-                    if (barLow < lowest)
+                    if (barLow < lowest || lowest == 0)
                     {
                         lowest = barLow;
                     }
@@ -91,7 +91,7 @@ namespace Alveo.UserCode
                 for (int x = 1; x <= SRBars + 1; x++)
                 {
                     double barHigh = iHigh(Symbol(), Period(), x);
-                    if (barHigh > highest)
+                    if (barHigh > highest || highest == 0)
                     {
                         highest = barHigh;
                     }
